@@ -104,8 +104,8 @@ public class Board implements IBoard {
 			}
 		}
 
-		ix = x;
-		iy = y;
+		ix += dx;
+		iy += dy;
 
 		for (int i = 0; i < ship.getLength(); ++i) {
 			this.ships[ix][iy] = ship.getLabel();
