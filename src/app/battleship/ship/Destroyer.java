@@ -1,11 +1,14 @@
 package app.battleship.ship;
 
-public class Destroyer extends AbstractShip {
-    public Destroyer(Orientation o) {
-		super('D', "Frégate", 2, o);
-	}
+import app.battleship.ship.AbstractShip;
 
-    public Destroyer() {
-		this(null);
-    }
+public class Destroyer extends AbstractShip{
+	
+	public Destroyer(){	
+		super("D", "Destroyer", 3, Orientation.EAST);
+	}
+	
+	public Destroyer(Orientation orientation){	
+		super("D", "Destroyer", 3, orientation);
+	}
 }

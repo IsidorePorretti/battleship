@@ -1,13 +1,13 @@
 package app.battleship.ship;
 
-import app.battleship.ship.AbstractShip.Orientation;
-
-public class Battleship extends AbstractShip {
-    public Battleship(Orientation o) {
-		super('B', "Croiseur", 4, o);
+public class Battleship extends AbstractShip{
+	
+	public Battleship(){					//premiere constructeur 
+		//on utilise super pour faire reference a la methode mere
+		super("B", "Battleship", 4, Orientation.EAST);
 	}
-
-	public Battleship(){
-	this(null);
+	
+	public Battleship(Orientation orientation){	//deuxieme constructeur en specifiant le valeur d'orientation
+		super("B", "Battleship", 4, orientation);
 	}
 }

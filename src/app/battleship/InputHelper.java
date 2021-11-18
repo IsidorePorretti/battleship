@@ -1,36 +1,23 @@
 package app.battleship;
 
-
 import java.util.Arrays;
 import java.util.Scanner;
 
 public final class InputHelper {
 
-    /* **
-     * Constructeur
-     */
     private InputHelper() {}
 
-    /* **
-     * Classe ShipInput, interne à InputHelper
-     */
     public static class ShipInput {
         public String orientation;
         public int x;
         public int y;
     }
 
-    /* **
-     * Classe CoordInput, interne à InputHelper
-     */
     public static class CoordInput {
         public int x;
         public int y;
     }
 
-    /* **
-     * Méthodes de la classe InputHelper
-     */
     public static ShipInput readShipInput() {
         @SuppressWarnings("resource")
         Scanner sin = new Scanner(System.in);

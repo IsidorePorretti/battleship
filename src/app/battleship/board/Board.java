@@ -1,159 +1,223 @@
 package app.battleship.board;
 
-
 import java.io.IOException;
+
+import app.battleship.Hit;
+import app.battleship.IBoard;
 import app.battleship.ship.AbstractShip;
+import app.battleship.ship.ColorUtil;
+import app.battleship.ship.StateShip;
 import app.battleship.ship.AbstractShip.Orientation;
 
-
 public class Board implements IBoard {
-    private int w; 
-	private int h;
-	private String name;
-
-	private Character[][] ships;
-	private boolean[][] hits; //frappes 
 	
+	private int size;
+	private String nom;
+	
+	private StateShip[][] navires; 
+	private Boolean[][] frappes ;
+	
+	
+	
+	public Board(String nom, int size){
+	this.size = size;
+	this.nom = nom;
+	 this.frappes = new Boolean[this.size][this.size];
+	 this.navires = new StateShip[this.size][this.size];
+	}
 
+	public Board(String nom){ 
+	this.nom = nom;
+	this.size = 10;
+	this.frappes = new Boolean[this.size][this.size];
+	this.navires = new StateShip[this.size][this.size];
+	
+	}
+
+public void print(){
+
+char letter = 'A'; 
+
+try {Runtime.getRuntime().exec("clear");} catch (IOException e) {}
+System.out.println();
+System.out.println(this.nom);
+System.out.print("Navires :   ");
+System.out.println();
+
+
+for (int i = -1; i < this.size; ++i){
+
+	for(int j = -1; j< this.size;j++)
+	{
+		if(i == -1)
+		{
+			if(j == -1)
+				System.out.print("   ");
+			else
+				System.out.print(" "+ ((char)(letter+j)));
+				
+		}
+		else if(i!= -1 && j != -1) 
+		{
+			if(this.navires[j][i] == null){
+				System.out.print(" .");
+			}
+			else{
+				System.out.print(" " + this.navires[j][i].toString()); 
+			}
+
+		}
+    }
     
-	public Board(String name, int w, int h) {
-		this.w = w;
-		this.h = h;
-		this.name = name;
-		
-		this.ships = new Character[w][h];
-		this.hits= new boolean[w][h];
+	System.out.println();
+	if(i < 8)
+		System.out.print(" ");
+	if(i+1 != this.size)
+	 System.out.print(" "+ (i+2));
+	
+}
+
+
+for (int i = -1; i < this.size; ++i){
+
+	for(int j = -1; j< this.size;j++)
+	{
+		if(i == -1)
+		{
+			if(j == -1)
+				System.out.print("   ");
+			else
+				System.out.print(" "+ ((char)(letter+j)));
+				
+		}
+		else if(i!= -1 && j != -1)
+		{
+			if(frappes[j][i]== null)
+				System.out.print(ColorUtil.colorize(" .", ColorUtil.Color.YELLOW));
+			else if (frappes[j][i]== false)
+				System.out.print(ColorUtil.colorize(" X", ColorUtil.Color.WHITE));
+			else if (frappes[j][i]== true)
+				System.out.print(ColorUtil.colorize(" X", ColorUtil.Color.RED));
+		}
+			
+	}
+	System.out.println();
+	if(i < 8)
+		System.out.print(" ");
+	if(i+1 != this.size)
+	 System.out.print(" "+ (i+2));
+	
+}
+
+
+	}
+
+@Override
+public int getSize() {
+	return size;
+}
+
+@Override
+public void putShip(AbstractShip ship, int x, int y) {	
+	Orientation o = ship.getorientation();
+	int dirx = 0;
+	int diry = 0;
+	int curx = x;
+	int cury = y;
+	if(o == Orientation.NORTH){
+		if(y - ship.gettaille() < -1){		
+			throw new IllegalArgumentException("Not possible... outside of the grid!");
+		}
+		diry=-1;
+	}
+	else if(o == Orientation.SOUTH){
+		if(y + ship.gettaille() >= this.size ){		
+			throw new IllegalArgumentException("Not possible... outside of the grid!");
+		}
+		diry=1;
+	}
+	else if(o == Orientation.EAST){
+		if(x + ship.gettaille() >= this.size){
+			throw new IllegalArgumentException("Not possible... outside of the grid!");
+		}
+		dirx=1;
+	}
+	else if(o == Orientation.WEST){
+		if(x - ship.gettaille() < -1){
+			throw new IllegalArgumentException("Not possible... outside of the grid!");
+		}
+		dirx=-1;
 	}
 	
-	public Board(String name) {
-		this(name, 10, 10);
+	
+	
+	for(int i=0; i < ship.gettaille(); i++){			
+		if(hasShip(curx, cury)){
+			throw new IllegalArgumentException("Not possible... outside of the grid!");
+		}
 	}
 	
-	public void print() {
-		Character currentLetter = 'A';
-		Character currentShipLabel;
-		Character currentHitLabel;
-		try {Runtime.getRuntime().exec("clear");} catch (IOException e) {}
-		System.out.println(this.name);
+	curx = x;
+	cury = y;
+	
+	for(int i=0; i < ship.gettaille(); i++){			
+		this.navires[curx][cury] = new StateShip(ship);
+		curx = curx + dirx;
+		cury = cury + diry;
+	}
+}
 
-		System.out.print("Navires :                 Frappes : \n   ");
-		for (int i = 0; i < this.w; ++i) {
-			System.out.print(currentLetter++ + " ");
-		}
+@Override
+public boolean hasShip(int x, int y) {
+	if(x > this.size || y > this.size){
+		throw new IllegalArgumentException("Not possible... outside of the grid!"); 
+	}
+	if(this.navires[x][y] != null){
+		return true;
+	}
+	else
+		return false; 
+}
+
+@Override
+public void setHit(boolean hit, int x, int y) {
+	if(x > this.size || y > this.size){
+		throw new IllegalArgumentException("Not possible... outside of the grid!"); 
+	}
+	this.frappes[x][y] = hit;
+	
+}
+
+@Override
+public Boolean getHit(int x, int y) {
+	if(x > this.size || y > this.size){
+		throw new IllegalArgumentException("Not possible... outside of the grid!"); 
+	}
+	return this.frappes[x][y];
+}
+
+@Override
+public Hit sendHit(int x, int y) {
+	if(navires[x][y] == null){ 
+		return Hit.MISS;
 		
-		currentLetter = 'A';
-		System.out.print("      ");
-		for (int i = 0; i < this.w; ++i) {
-			System.out.print(currentLetter++ + " ");
-		}
-		
-		System.out.println();
-
-		for (int j = 0; j < this.h; ++j) {
-			System.out.print(String.format("%2d ", j + 1));
-
-			for (int i = 0; i < this.h; ++i) {
-                currentShipLabel = this.ships[i][j] != null ? this.ships[i][j] : '.'; 
-				System.out.print(currentShipLabel + " ");
-			}
-			System.out.print(" ");
-			System.out.print(String.format("  %2d ", j + 1));
-			for (int i = 0; i < this.h; ++i) {
-				currentHitLabel = this.hits[i][j] ? 'X' : '.'; 
-				System.out.print(currentHitLabel + " ");
-			}
-			System.out.println();
-		}
-		
-		currentLetter++;
 	}
+	else
+	{
 
-    @Override
-	public void putShip(AbstractShip ship, int x, int y) {
-		Orientation o = ship.getOrientation();
-		int dx = 0, dy = 0;
-		if (o == Orientation.EAST) {
-			if (x + ship.getLength() >= this.w) {
-				throw new IllegalArgumentException("ship is out of the grid.");	
-			}
-			dx = 1;
-		} else if (o == Orientation.SOUTH) {
-			if (y + ship.getLength() >= this.h) {
-				throw new IllegalArgumentException("ship is out of the grid.");	
-			}
-			dy = 1;
-		} else if (o == Orientation.NORTH) {
-			if (y + 1 - ship.getLength() < 0) {
-				throw new IllegalArgumentException("ship is out of the grid.");	
-			}
-			dy = -1;
+		if(navires[x][y].isStruck() == true){
+				return Hit.DEJA;
 		}
-		if (o == Orientation.WEST) {
-			if (x + 1 - ship.getLength() < 0) {
-				throw new IllegalArgumentException("ship is out of the grid.");	
+		else{
+			navires[x][y].addStrike();
+			if(navires[x][y].isSunk() == true){
+				System.out.println(Hit.InttoHit(navires[x][y].getShip().gettaille()) + " coulé");
+				return Hit.InttoHit(navires[x][y].getShip().gettaille());
 			}
-			dx = -1;
-		}
-
-		int ix = x;
-		int iy = y;
-
-		for (int i = 0; i < ship.getLength(); ++i) {
-			if (hasShip(ix, iy)) {
-				throw new IllegalArgumentException("Ship overlays.");
-			}
-		}
-
-		ix += dx;
-		iy += dy;
-
-		for (int i = 0; i < ship.getLength(); ++i) {
-			this.ships[ix][iy] = ship.getLabel();
-			ix += dx;
-			iy += dy;
+			return Hit.STRIKE;
 		}
 	}
+}
 
-	@Override
-	public boolean hasShip(int x, int y) {
-		if (x > this.w || y > this.h) {
-			throw new IllegalArgumentException("out of the grid.");
-		}
-		return this.ships[x][y] != null;
-	}
-
-
-	public void putHit(int x, int y) {
-		if (x > this.w || y > this.h) {
-			throw new IllegalArgumentException("out of the grid.");
-		}
-		this.hits[x][y] = true;
-	}
-
-
-	public boolean hasHit(int x, int y) {
-		if (x > this.w || y > this.h) {
-			throw new IllegalArgumentException("out of the grid.");
-		}
-		return this.hits[x][y];		
-	}
-
-    @Override
-    public int getSize() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public void setHit(boolean hit, int x, int y) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public Boolean getHit(int x, int y) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
 }

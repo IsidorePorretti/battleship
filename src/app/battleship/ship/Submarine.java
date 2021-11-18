@@ -1,11 +1,15 @@
 package app.battleship.ship;
 
-public class Submarine extends AbstractShip {
-    public Submarine(Orientation o) {
-		super('S', "Sous-marin", 3, o);
-	}
+import app.battleship.ship.AbstractShip;
 
-    public Submarine() {
-		this(null);
-    }
+
+public class Submarine extends AbstractShip{
+	
+	public Submarine(){					
+		super("S", "Submarine", 2, Orientation.EAST);
+	}
+	
+	public Submarine(Orientation orientation){	
+		super("S", "Submarine", 2, orientation);
+	}
 }

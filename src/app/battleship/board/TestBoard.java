@@ -1,94 +1,37 @@
 package app.battleship.board;
 
-
+import java.io.IOException;
 import java.util.Arrays;
-import java.util.Scanner;
+import java.util.List;
 
-import app.battleship.ship.*;
+import app.battleship.Hit;
+import app.battleship.Player;
+import app.battleship.board.Board;
+import app.battleship.ship.AbstractShip;
+import app.battleship.ship.Battleship;
+import app.battleship.ship.Carrier;
+import app.battleship.ship.Destroyer;
+import app.battleship.ship.Submarine;
 import app.battleship.ship.AbstractShip.Orientation;
 
-
 public class TestBoard {
-    public static void main(String args[]) {
-        Board b = new Board("test");
-		b.putHit(1, 2);
-		b.print();
+	public static void main(String[] args){
 
-        
-		boolean done = false;
-		int i = 0;
-		AbstractShip[] ships = {
-				new Destroyer(), 
-                new Submarine(), 
-                new Submarine(), 
-                new Battleship(), 
-                new Carrier()
-		};
+    try {Runtime.getRuntime().exec("clear");} catch (IOException e) {}
+		int[] coords = {2,2};
+		Board test = new Board("Mon tableau", 10);
+		Board opp = new Board("Tableau adverse",10);
+		List<AbstractShip> ships = Arrays.asList(new Destroyer(),new Submarine(), new Submarine(), new Battleship(), new Carrier());
+		Player player = new Player(opp , test , ships);
+		test.putShip(new Submarine(Orientation.SOUTH), (2)-1, (2)-1);
+		opp.putShip(new Submarine(Orientation.SOUTH), (5)-1, (5)-1);
+		Hit test_hit = player.sendHit(coords);
+		test.print();
+		opp.print();
+		System.out.println(test_hit.toString());
 
-		do {
-			AbstractShip s = ships[i];	
-			String msg = String.format("navire %d : # place le '%s' de taille (%d) en place, orienté %s", i + 1, s.getName(), s.getLength(), s.getOrientation());
-			System.out.println(msg);
-			ShipInput res = readShipInput();
-			Orientation orientation = null;
-			if (res.orientation.equals("n")) {
-				orientation = Orientation.NORTH;
-			} else if (res.orientation.equals("s")) {
-				orientation = Orientation.SOUTH;
-			} else if (res.orientation.equals("e")) {
-				orientation = Orientation.EAST;
-			} else if (res.orientation.equals("o")) {
-				orientation = Orientation.WEST;
-			}
-
-			s.setOrientation(orientation);
-			try {
-				b.putShip(s, res.x, res.y);
-			} catch(IllegalArgumentException e) {
-				System.err.println("Impossible de placer le navire a cette position");
-				i--;
-			}
-			b.print();
-			++i;
-			done = i == 5;
-
-		} while (!done);
+		
 	}
-
-	public static class ShipInput {
-		public String orientation;
-		public int x;
-		public int y;
-	}
-
-    public static ShipInput readShipInput() {
-		@SuppressWarnings("resource")
-		Scanner sin = new Scanner(System.in);
-		ShipInput res = new ShipInput();
-		String[] validOrientations = {"n", "s", "e", "o"};
-		boolean done = false;
-		do {
-			try {
-				String[] in = sin.nextLine().toLowerCase().split(" ");
-				if (in.length == 2) {
-					String coord = in[0];
-					if (Arrays.asList(validOrientations).contains(in[1])) {
-						res.orientation = in[1];
-						res.x = coord.charAt(0) - 'a';
-						res.y = Integer.parseInt(coord.substring(1, coord.length())) - 1;
-						done = true;
-					}
-				}
-			} catch (Exception e) {
-				// nop
-			}
-
-			if (!done) {
-				System.err.println("Format incorrect! Entrez la position sous forme 'A0 n'");
-			}
-
-		} while (!done && sin.hasNextLine());
-
-		return res;
-	}
+	
+	
 }

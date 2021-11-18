@@ -1,48 +1,62 @@
 package app.battleship.ship;
 
-public class AbstractShip {
-    public enum Orientation {
-		NORTH, SOUTH, EAST, WEST
-	}
+public abstract class AbstractShip {
+	public enum Orientation{
+		NORTH, SOUTH, EAST, WEST;
+		}
 	
-	private Character label;
-	private String name;
-	private int length;
+	private String label; 
+	private String nom;
+	private int taille;
 	private Orientation orientation;
-
-	public AbstractShip(Character label, String name, int length, Orientation orientation) {
-		this.label = label; 
-		this.name = name;
-		this.length = length;
-		this.orientation = orientation;
-	}
+	private int strikeCount;
 	
-	public Character getLabel() {
-		return this.label;
+	public AbstractShip(String c, String nom, int taille, Orientation orientation){
+		this.label = c;
+		this.nom = nom;
+		this.taille = taille;
+		this.orientation = orientation; 
 	}
-
-	public String getName() {
-		return this.name;
+	public Character getlabel()
+	{
+		return this.label.charAt(0);
 	}
-	
-	public int getLength() {
-		return this.length;
+	public String getnom()
+	{
+		return this.nom;
+		
 	}
-
-	public Orientation getOrientation() {
+	public int gettaille()
+	{
+		return this.taille;
+	}
+	public Orientation getorientation()
+	{
 		return this.orientation;
 	}
-
-	public void setOrientation(Orientation orientation) {
-		this.orientation = orientation;
+	public void setOrientation(Orientation o )
+	{
+		this.orientation = o;
 	}
-	/*
 	
-    1x Destroyer (D) - taille 2
-    2x Sub-marine (S) - taille 3
-    1x Battleship (B) - taille 4
-    1x Aircraft-cairrier (C) - taille 5
+	public void addstrike(){					
+		if(this.strikeCount >= this.taille){
+			throw new IllegalArgumentException("The number of Hit is already maximum");
+		}
+		this.strikeCount++;
+	}
+	
+	public boolean issunk(){				
+		if(this.taille == this.strikeCount)		
+			return true;
+		else
+			return false;
+	}
+	
+	public int getstrikeCount(){
+		return this.strikeCount;
+	}
 
 
-	*/
+
 }

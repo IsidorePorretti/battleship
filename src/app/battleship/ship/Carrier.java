@@ -1,11 +1,15 @@
 package app.battleship.ship;
 
-public class Carrier extends AbstractShip {
-    public Carrier(Orientation o) {
-		super('C', "Porte avions", 5, o);
-	}
+import app.battleship.ship.AbstractShip;
 
-	public Carrier(){
-	this(null);
+public class Carrier extends AbstractShip{
+	
+	public Carrier(){					//premiere constructeur 
+		//on utilise super pour faire reference a la methode mere
+		super("C", "Carrier", 2, Orientation.EAST);
+	}
+	
+	public Carrier(Orientation orientation){	//deuxieme constructeur en specifiant le valeur d'orientation
+		super("C", "Carrier", 2, orientation);
 	}
 }
